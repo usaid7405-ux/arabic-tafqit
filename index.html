@@ -5,285 +5,132 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>تفقيط: تحويل الأرقام إلى كلمات للشيكات والعقود</title>
 <meta name="description" content="أداة تفقيط مجانية تحوّل المبلغ إلى كلمات عربية للشيكات والفواتير والعقود مع دعم العملات الخليجية (SAR, AED, KWD, QAR, OMR, BHD).">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg: #f8fafc;
-  --card: #ffffff;
-  --ink: #0f172a;
-  --accent: #2563eb;
-  --accent-hover: #1d4ed8;
-  --text: #334155;
-  --line: #e2e8f0;
-  --soft: #f1f5f9;
-  --err: #b91c1c;
-  --cheque-bg: #f8fafc;
-  --cheque-border: #cbd5e1;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #0b1220;
-    --card: #111a2e;
-    --ink: #f1f5f9;
-    --accent: #3b82f6;
-    --accent-hover: #60a5fa;
-    --text: #cbd5e1;
-    --line: #26334d;
-    --soft: #18233b;
-    --err: #fca5a5;
-    --cheque-bg: #131f37;
-    --cheque-border: #334155;
-  }
-}
-
-* { box-sizing: border-box; }
-body {
-  font-family: system-ui, -apple-system, "Segoe UI", Tahoma, Roboto, sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  margin: 0;
-  padding: 20px 16px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.card {
-  width: 100%;
-  max-width: 680px;
-  background: var(--card);
-  padding: 28px;
-  border-radius: 14px;
-  border: 1px solid var(--line);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-}
-
-h1 {
-  font-size: 1.5rem;
-  color: var(--ink);
-  margin: 0 0 8px;
-  text-align: center;
-}
-
-.subtitle {
-  text-align: center;
-  font-size: 0.9rem;
-  color: var(--text);
-  margin-bottom: 24px;
-  opacity: 0.85;
-}
-
-label {
-  display: block;
-  font-weight: 600;
-  margin-bottom: 8px;
-  font-size: 0.95rem;
-  color: var(--ink);
-}
-
-.field { margin-bottom: 20px; }
-
-input, select {
-  width: 100%;
-  padding: 13px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  font-size: 1rem;
-  background: var(--card);
-  color: var(--ink);
-  font-family: inherit;
-  transition: border-color 0.2s;
-}
-
-input:focus, select:focus {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
-}
-
-/* Cheque Preview Component */
-.cheque-preview {
-  background: var(--cheque-bg);
-  border: 1px dashed var(--cheque-border);
-  border-radius: 10px;
-  padding: 18px;
-  margin-top: 22px;
-  position: relative;
-}
-
-.cheque-title {
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--accent);
-  margin-bottom: 12px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.cheque-line {
-  border-bottom: 1px solid var(--line);
-  padding-bottom: 6px;
-  min-height: 38px;
-}
-
-#result {
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: var(--ink);
-  line-height: 1.8;
-  word-break: break-word;
-}
-
-.error #result {
-  color: var(--err);
-  font-size: 0.95rem;
-  font-weight: 500;
-}
-
-.actions {
-  display: flex;
-  gap: 10px;
-  margin-top: 16px;
-  align-items: center;
-}
-
-button {
-  background: var(--accent);
-  color: #fff;
-  border: 0;
-  padding: 10px 20px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  font-weight: 600;
-  font-family: inherit;
-  transition: background 0.2s;
-}
-
-button:hover:not([disabled]) {
-  background: var(--accent-hover);
-}
-
-button[disabled] {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
-
-.btn-secondary {
-  background: transparent;
-  color: var(--text);
-  border: 1px solid var(--line);
-}
-
-.btn-secondary:hover:not([disabled]) {
-  background: var(--soft);
-}
-
-#status {
-  margin-right: 8px;
-  font-size: 0.85rem;
-  color: var(--accent);
-  font-weight: 600;
-}
-
-.note {
-  margin-top: 24px;
-  font-size: 0.85rem;
-  line-height: 1.7;
-  border-top: 1px solid var(--line);
-  padding-top: 16px;
-  color: var(--text);
-  opacity: 0.9;
-}
-
-/* SEO Content Section */
-.seo-section {
-  width: 100%;
-  max-width: 680px;
-  margin-top: 28px;
-  line-height: 1.8;
-}
-
-.seo-section h2 {
-  font-size: 1.15rem;
-  color: var(--ink);
-  margin-top: 22px;
-  border-right: 3px solid var(--accent);
-  padding-right: 10px;
-}
-
-.seo-section p, .seo-section ul {
-  font-size: 0.92rem;
-  color: var(--text);
-}
-
-.seo-section ul {
-  padding-right: 20px;
-}
-
-.seo-section li {
-  margin-bottom: 8px;
-}
+:root{--bg:#f4f7fb;--card:#fff;--ink:#0f172a;--accent:#2563eb;--accent2:#1e40af;--text:#475569;--line:#e2e8f0;--soft:#f1f5f9;--err:#b91c1c;--cheque:#fffdf5;--cl:#d6c98f}
+@media(prefers-color-scheme:dark){:root{--bg:#0b1220;--card:#111a2e;--ink:#f1f5f9;--accent:#3b82f6;--accent2:#1d4ed8;--text:#cbd5e1;--line:#26334d;--soft:#18233b;--err:#fca5a5;--cheque:#16213a;--cl:#334155}}
+*{box-sizing:border-box}
+body{font-family:'Cairo','Tajawal',system-ui,-apple-system,'Segoe UI',Tahoma,sans-serif;background:var(--bg);color:var(--text);margin:0;padding:16px;display:flex;flex-direction:column;align-items:center}
+.card{width:100%;max-width:680px;background:var(--card);border-radius:14px;border:1px solid var(--line);overflow:hidden;box-shadow:0 6px 24px rgba(0,0,0,.06)}
+.hero{background:linear-gradient(135deg,var(--accent2),var(--accent));color:#fff;padding:26px 22px;text-align:center}
+.logo{width:46px;height:46px;margin-bottom:6px}
+.hero h1{margin:0 0 6px;font-size:1.5rem;color:#fff}
+.hero p{margin:0;font-size:.92rem;opacity:.92}
+.body{padding:24px}
+.field{margin-bottom:18px}
+label{display:block;font-weight:600;margin-bottom:8px;font-size:.95rem;color:var(--ink)}
+input,select{width:100%;padding:13px;border:1px solid var(--line);border-radius:8px;font-size:1.05rem;background:var(--card);color:var(--ink);font-family:inherit}
+input:focus,select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(37,99,235,.18)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+button{background:var(--accent);color:#fff;border:0;padding:10px 20px;border-radius:8px;cursor:pointer;font-size:.9rem;font-weight:600;font-family:inherit;transition:background .2s,transform .1s}
+button:hover:not([disabled]){background:var(--accent2)}
+button:active:not([disabled]){transform:scale(.97)}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button[disabled]{opacity:.45;cursor:not-allowed}
+.chip{background:var(--soft);color:var(--ink);border:1px solid var(--line);padding:6px 14px;border-radius:999px;font-size:.85rem}
+.chip:hover:not([disabled]){background:var(--line)}
+.btn-secondary{background:transparent;color:var(--text);border:1px solid var(--line)}
+.btn-secondary:hover:not([disabled]){background:var(--soft)}
+.wa{background:#16a34a}
+.wa:hover:not([disabled]){background:#15803d}
+.cheque{background:var(--cheque);border:1px solid var(--cl);border-radius:10px;padding:18px;margin-top:22px}
+.cheque-top{display:flex;justify-content:space-between;font-size:.8rem;font-weight:700;color:var(--accent);margin-bottom:12px}
+#status{color:var(--accent)}
+.row{display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--cl);padding:8px 0;min-height:48px}
+.tag{font-size:.78rem;color:var(--text);min-width:96px}
+.fig{font-weight:800;font-size:1.25rem;color:var(--ink);direction:ltr;unicode-bidi:isolate}
+#result{margin:0;font-size:1.1rem;font-weight:700;color:var(--ink);line-height:1.9;word-break:break-word}
+.error #result{color:var(--err);font-size:.95rem;font-weight:500}
+.pop #result,.pop .fig{animation:pop .35s ease}
+@keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+.note{margin:22px 0 0;font-size:.85rem;line-height:1.7;border-top:1px solid var(--line);padding-top:14px}
+.help{width:100%;max-width:680px;margin-top:26px;line-height:1.9;font-size:.93rem}
+.help h2{font-size:1.15rem;color:var(--ink);border-right:3px solid var(--accent);padding-right:10px;margin:24px 0 10px}
+.help svg{width:100%;max-width:420px;display:block;margin:14px auto;color:var(--text)}
+.help li{margin-bottom:6px}
+details{border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:10px;background:var(--card)}
+summary{cursor:pointer;font-weight:700;color:var(--ink)}
+details p{margin:10px 0 0}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
-
 <main class="card">
-  <h1>تفقيط: تحويل الأرقام إلى كلمات</h1>
-  <div class="subtitle">أداة معتمدة لتحويل المبالغ المالية للأرقام والحروف للشيكات والعقود الرسمية</div>
-
-  <div class="field">
-    <label for="amount">المبلغ الرقمي:</label>
-    <input id="amount" type="text" inputmode="decimal" autocomplete="off" placeholder="مثال: 1500.50 أو ١٥٠٠٫٥٠">
-  </div>
-
-  <div class="field">
-    <label for="cur">العملة:</label>
-    <select id="cur">
-      <option value="SAR">ريال سعودي (SAR)</option>
-      <option value="AED">درهم إماراتي (AED)</option>
-      <option value="KWD">دينار كويتي (KWD)</option>
-      <option value="QAR">ريال قطري (QAR)</option>
-      <option value="OMR">ريال عماني (OMR)</option>
-      <option value="BHD">دينار بحريني (BHD)</option>
-      <option value="NONE">بدون عملة (عدد صحيح)</option>
-    </select>
-  </div>
-
-  <div class="cheque-preview" id="box" aria-live="polite">
-    <div class="cheque-title">
-      <span>معاينة نص الشيك / العقد</span>
-      <span id="status" role="status"></span>
+  <header class="hero">
+    <svg class="logo" viewBox="0 0 48 48" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="38" height="26" rx="4"/><path d="M12 29h14M12 22h8"/><circle cx="35" cy="22" r="3"/></svg>
+    <h1>تفقيط: تحويل الأرقام إلى كلمات</h1>
+    <p>اكتب المبلغ فيظهر نص الشيك فوراً، بالعملات الخليجية</p>
+  </header>
+  <div class="body">
+    <div class="field">
+      <label for="amount">المبلغ الرقمي</label>
+      <input id="amount" type="text" inputmode="decimal" autocomplete="off" placeholder="مثال: 1500.50 أو ١٥٠٠٫٥٠">
+      <div class="chips">
+        <button type="button" class="chip" data-amt="100">100</button>
+        <button type="button" class="chip" data-amt="1500.50">1,500.50</button>
+        <button type="button" class="chip" data-amt="25000">25,000</button>
+        <button type="button" class="chip" data-amt="1000000">1,000,000</button>
+      </div>
     </div>
-    <div class="cheque-line">
-      <div id="result">أدخل المبلغ ليظهر النص هنا.</div>
+    <div class="field">
+      <label for="cur">العملة</label>
+      <select id="cur">
+        <option value="SAR">ريال سعودي (SAR)</option>
+        <option value="AED">درهم إماراتي (AED)</option>
+        <option value="KWD">دينار كويتي (KWD)</option>
+        <option value="QAR">ريال قطري (QAR)</option>
+        <option value="OMR">ريال عماني (OMR)</option>
+        <option value="BHD">دينار بحريني (BHD)</option>
+        <option value="NONE">بدون عملة (عدد صحيح)</option>
+      </select>
     </div>
-    <div class="actions">
-      <button id="copy" type="button" disabled>نسخ النص</button>
-      <button id="clear" type="button" class="btn-secondary">مسح</button>
-    </div>
+    <section class="cheque" id="box" aria-live="polite">
+      <div class="cheque-top"><span>معاينة نص الشيك</span><span id="status" role="status"></span></div>
+      <div class="row"><span class="tag">المبلغ بالأرقام</span><span class="fig" id="fig">—</span></div>
+      <div class="row"><span class="tag">المبلغ بالحروف</span><p id="result">أدخل المبلغ ليظهر النص هنا.</p></div>
+      <div class="actions">
+        <button id="copy" type="button" disabled>نسخ النص</button>
+        <button id="wa" type="button" class="wa" disabled>مشاركة واتساب</button>
+        <button id="clear" type="button" class="btn-secondary">مسح</button>
+      </div>
+    </section>
+    <p class="note"><strong>تنبيه هام:</strong> هذه الأداة للمساعدة في كتابة الشيكات والفواتير والعقود. راجع النص دائماً وقارنه بالرقم قبل التوقيع أو الاعتماد الرسمي، ولا تعتمد عليه وحده في مستند مالي أو قانوني.</p>
   </div>
-
-  <p class="note"><strong>تنبيه هام:</strong> هذه الأداة للمساعدة في كتابة الشيكات والفواتير والعقود. راجع النص دائماً وقارنه بالرقم قبل التوقيع أو الاعتماد الرسمي، ولا تعتمد عليه وحده في مستند مالي أو قانوني[cite: 2, 4].</p>
 </main>
 
-<article class="seo-section">
-  <h2>طريقة كتابة الشيك والمبالغ بالكلمات العربية</h2>
-  <p>يعد تفقيط المبالغ المالية (تحويل الأرقام إلى كلمات) خياراً أساسياً لمنع التلاعب والتزوير في المعاملات المصرفية والعقود التجارية. عند كتابة الشيك، يفضل دائماً إغلاق النص بكلمة <strong>"فقط"</strong> في البداية وعبارة <strong>"لا غير"</strong> في النهاية لضمان عدم إضافة أي أرقام أو كلمات إضافية.</p>
-
-  <h2>قواعد تفقيط المبالغ بالعملات الخليجية</h2>
+<article class="help">
+  <h2>كيف تكتب مبلغ الشيك بالحروف؟</h2>
+  <svg viewBox="0 0 320 120" role="img" aria-label="شكل الشيك: المبلغ بالأرقام والمبلغ بالحروف والتوقيع">
+    <rect x="2" y="2" width="316" height="116" rx="8" fill="none" stroke="currentColor" opacity=".4"/>
+    <rect x="20" y="16" width="92" height="26" rx="4" fill="none" stroke="#2563eb" stroke-width="2"/>
+    <text x="66" y="34" text-anchor="middle" font-size="12" fill="currentColor">1,500.50</text>
+    <text x="300" y="30" text-anchor="end" font-size="11" fill="currentColor">المبلغ بالأرقام</text>
+    <line x1="20" y1="72" x2="300" y2="72" stroke="currentColor" opacity=".5"/>
+    <text x="300" y="66" text-anchor="end" font-size="11" fill="currentColor">فقط ... لا غير</text>
+    <line x1="20" y1="102" x2="120" y2="102" stroke="currentColor" opacity=".5"/>
+    <text x="70" y="115" text-anchor="middle" font-size="10" fill="currentColor">التوقيع</text>
+  </svg>
+  <ol>
+    <li>اكتب المبلغ بالأرقام في الخانة المخصصة.</li>
+    <li>اكتب المبلغ بالحروف في السطر، وابدأه بكلمة «فقط» وأنهه بعبارة «لا غير».</li>
+    <li>لا تترك فراغاً في السطر حتى لا تُضاف كلمات أخرى.</li>
+    <li>قارن الأرقام بالحروف، ثم وقّع.</li>
+  </ol>
+  <h2>العملات المدعومة</h2>
   <ul>
-    <li><strong>الريال السعودي (SAR):</strong> ينقسم الريال إلى 100 هللة.</li>
-    <li><strong>الدرهم الإماراتي (AED) والريال القطري (QAR):</strong> ينقسم كل منهما إلى 100 درهم.</li>
-    <li><strong>الدينار الكويتي (KWD)، الريال العماني (OMR)، والدينار البحريني (BHD):</strong> تعتمد هذه العملات على 3 خانات عشرية (1000 فلس أو بيسة)، وتوفر هذه الأداة دقة كاملة لحساب الكسور الثلاثية.</li>
+    <li><strong>الريال السعودي (SAR):</strong> يتكون من 100 هللة.</li>
+    <li><strong>الدرهم الإماراتي (AED):</strong> يتكون من 100 فلس.</li>
+    <li><strong>الريال القطري (QAR):</strong> يتكون من 100 درهم.</li>
+    <li><strong>الدينار الكويتي (KWD) والدينار البحريني (BHD):</strong> يتكون كل منهما من 1000 فلس.</li>
+    <li><strong>الريال العماني (OMR):</strong> يتكون من 1000 بيسة.</li>
   </ul>
-
-  <h2>الأسئلة الشائعة حول التفقيط (FAQ)</h2>
-  <p><strong>س: هل تدعم الأداة الأرقام العربية الشرقية (١٢٣)؟</strong><br>
-  ج: نعم، يمكنك إدخال المبلغ بالأرقام الإنجليزية أو العربية الشرقية وسوف تقوم الأداة بتحويلها ومعالجتها بدقة تلقائياً.</p>
+  <h2>أسئلة شائعة</h2>
+  <details><summary>هل تدعم الأداة الأرقام العربية الشرقية (١٢٣)؟</summary><p>نعم، يمكنك الكتابة بالأرقام الإنجليزية أو العربية الشرقية، وتحوّلها الأداة تلقائياً.</p></details>
+  <details><summary>لماذا نكتب «فقط» و«لا غير»؟</summary><p>لمنع إضافة أي كلمة أو رقم إلى المبلغ بعد كتابته.</p></details>
+  <details><summary>هل أعتمد على النص دون مراجعة؟</summary><p>لا. راجع النص دائماً وقارنه بالرقم قبل التوقيع، فالمسؤولية على من يوقّع.</p></details>
 </article>
 
 <script>
@@ -392,14 +239,24 @@ function tafqit(input,code){
 const $=id=>document.getElementById(id);
 let current='';
 
+function pretty(raw){
+  const s=normalize(raw);
+  if(!/^\d*\.?\d+$|^\d+\.?$/.test(s))return '';
+  const [i,f]=s.split('.');
+  return i.replace(/\B(?=(\d{3})+(?!\d))/g,',')+(f?'.'+f:'');
+}
+function setBtns(on){$('copy').disabled=!on;$('wa').disabled=!on;}
+
 function run(){
-  const raw=$('amount').value;
-  const box=$('box'),res=$('result'),btn=$('copy');
+  const raw=$('amount').value,box=$('box'),res=$('result'),code=$('cur').value;
   $('status').textContent='';
-  if(raw.trim()===''){box.classList.remove('error');res.textContent='أدخل المبلغ ليظهر النص هنا.';btn.disabled=true;current='';return;}
-  const r=tafqit(raw,$('cur').value);
-  if(r.ok){box.classList.remove('error');res.textContent=r.text;current=r.text;btn.disabled=false;}
-  else{box.classList.add('error');res.textContent=r.msg;current='';btn.disabled=true;}
+  $('fig').textContent=raw.trim()?(pretty(raw)||'—')+(code==='NONE'?'':' '+code):'—';
+  box.classList.remove('error','pop');
+  if(raw.trim()===''){res.textContent='أدخل المبلغ ليظهر النص هنا.';setBtns(false);current='';return;}
+  const r=tafqit(raw,code);
+  void box.offsetWidth;
+  if(r.ok){res.textContent=r.text;current=r.text;setBtns(true);box.classList.add('pop');}
+  else{box.classList.add('error');res.textContent=r.msg;current='';setBtns(false);}
 }
 
 async function copyText(){
@@ -409,17 +266,18 @@ async function copyText(){
     try{document.execCommand('copy');$('status').textContent='تم النسخ ✓';}catch(_){$('status').textContent='تعذر النسخ، انسخ النص يدوياً';}
     t.remove();}
 }
-
-function clearAll(){
-  $('amount').value='';
-  run();
-  $('amount').focus();
+function share(){
+  if(current)window.open('https://wa.me/?text='+encodeURIComponent(current),'_blank','noopener');
 }
+function clearAll(){$('amount').value='';run();$('amount').focus();}
 
 $('amount').addEventListener('input',run);
 $('cur').addEventListener('change',run);
 $('copy').addEventListener('click',copyText);
+$('wa').addEventListener('click',share);
 $('clear').addEventListener('click',clearAll);
+document.querySelectorAll('.chip').forEach(b=>b.addEventListener('click',()=>{$('amount').value=b.dataset.amt;run();}));
 </script>
 </body>
 </html>
+What do you think of this
