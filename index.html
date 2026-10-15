@@ -5,6 +5,29 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>تفقيط: تحويل الأرقام إلى كلمات للشيكات والعقود</title>
 <meta name="description" content="أداة تفقيط مجانية تحوّل المبلغ إلى كلمات عربية للشيكات والفواتير والعقود مع دعم العملات الخليجية (SAR, AED, KWD, QAR, OMR, BHD).">
+<link rel="canonical" href="https://ar.sueldopro.online/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='10' fill='%232563eb'/%3E%3Crect x='7' y='13' width='34' height='22' rx='4' fill='none' stroke='white' stroke-width='3'/%3E%3Cpath d='M13 27h13M13 21h8' stroke='white' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+<meta name="theme-color" content="#2563eb">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ar_AR">
+<meta property="og:title" content="تفقيط: تحويل الأرقام إلى كلمات للشيكات والعقود">
+<meta property="og:description" content="اكتب المبلغ فيظهر نص الشيك فوراً بالعملات الخليجية. أداة مجانية.">
+<meta property="og:url" content="https://ar.sueldopro.online/">
+<meta name="twitter:card" content="summary">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type": "Question", "name": "هل تدعم الأداة الأرقام العربية الشرقية (١٢٣)؟",
+     "acceptedAnswer": {"@type": "Answer", "text": "نعم، يمكنك الكتابة بالأرقام الإنجليزية أو العربية الشرقية، وتحوّلها الأداة تلقائياً."}},
+    {"@type": "Question", "name": "لماذا نكتب «فقط» و«لا غير»؟",
+     "acceptedAnswer": {"@type": "Answer", "text": "لمنع إضافة أي كلمة أو رقم إلى المبلغ بعد كتابته."}},
+    {"@type": "Question", "name": "هل أعتمد على النص دون مراجعة؟",
+     "acceptedAnswer": {"@type": "Answer", "text": "لا. راجع النص دائماً وقارنه بالرقم قبل التوقيع، فالمسؤولية على من يوقّع."}}
+  ]
+}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
@@ -12,10 +35,13 @@
 :root{--bg:#f4f7fb;--card:#fff;--ink:#0f172a;--accent:#2563eb;--accent2:#1e40af;--text:#475569;--line:#e2e8f0;--soft:#f1f5f9;--err:#b91c1c;--cheque:#fffdf5;--cl:#d6c98f}
 @media(prefers-color-scheme:dark){:root{--bg:#0b1220;--card:#111a2e;--ink:#f1f5f9;--accent:#3b82f6;--accent2:#1d4ed8;--text:#cbd5e1;--line:#26334d;--soft:#18233b;--err:#fca5a5;--cheque:#16213a;--cl:#334155}}
 *{box-sizing:border-box}
+html{scroll-behavior:smooth}
 body{font-family:'Cairo','Tajawal',system-ui,-apple-system,'Segoe UI',Tahoma,sans-serif;background:var(--bg);color:var(--text);margin:0;padding:16px;display:flex;flex-direction:column;align-items:center}
+a{color:var(--accent)}
 .card{width:100%;max-width:680px;background:var(--card);border-radius:14px;border:1px solid var(--line);overflow:hidden;box-shadow:0 6px 24px rgba(0,0,0,.06)}
 .hero{background:linear-gradient(135deg,var(--accent2),var(--accent));color:#fff;padding:26px 22px;text-align:center}
-.logo{width:46px;height:46px;margin-bottom:6px}
+.brand{display:inline-block;font-weight:800;font-size:.95rem;background:rgba(255,255,255,.18);padding:3px 14px;border-radius:999px;margin-bottom:10px}
+.logo{display:block;width:46px;height:46px;margin:0 auto 6px}
 .hero h1{margin:0 0 6px;font-size:1.5rem;color:#fff}
 .hero p{margin:0;font-size:.92rem;opacity:.92}
 .body{padding:24px}
@@ -27,7 +53,7 @@ input:focus,select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 
 button{background:var(--accent);color:#fff;border:0;padding:10px 20px;border-radius:8px;cursor:pointer;font-size:.9rem;font-weight:600;font-family:inherit;transition:background .2s,transform .1s}
 button:hover:not([disabled]){background:var(--accent2)}
 button:active:not([disabled]){transform:scale(.97)}
-button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 button[disabled]{opacity:.45;cursor:not-allowed}
 .chip{background:var(--soft);color:var(--ink);border:1px solid var(--line);padding:6px 14px;border-radius:999px;font-size:.85rem}
 .chip:hover:not([disabled]){background:var(--line)}
@@ -54,12 +80,20 @@ button[disabled]{opacity:.45;cursor:not-allowed}
 details{border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:10px;background:var(--card)}
 summary{cursor:pointer;font-weight:700;color:var(--ink)}
 details p{margin:10px 0 0}
-@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.info{width:100%;max-width:680px;margin-top:10px;line-height:1.9;font-size:.9rem}
+.info section{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:6px 18px 14px;margin-top:14px;scroll-margin-top:12px}
+.info h2{font-size:1.05rem;color:var(--ink);margin:14px 0 8px}
+.info p,.info li{margin:6px 0}
+.info ul{padding-right:20px}
+footer{width:100%;max-width:680px;margin:26px 0 10px;text-align:center;font-size:.85rem;line-height:2}
+footer nav{display:flex;justify-content:center;flex-wrap:wrap;gap:6px 20px;margin-bottom:6px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
 <body>
 <main class="card">
   <header class="hero">
+    <span class="brand">تفقيط</span>
     <svg class="logo" viewBox="0 0 48 48" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="38" height="26" rx="4"/><path d="M12 29h14M12 22h8"/><circle cx="35" cy="22" r="3"/></svg>
     <h1>تفقيط: تحويل الأرقام إلى كلمات</h1>
     <p>اكتب المبلغ فيظهر نص الشيك فوراً، بالعملات الخليجية</p>
@@ -97,7 +131,7 @@ details p{margin:10px 0 0}
         <button id="clear" type="button" class="btn-secondary">مسح</button>
       </div>
     </section>
-    <p class="note"><strong>تنبيه هام:</strong> هذه الأداة للمساعدة في كتابة الشيكات والفواتير والعقود. راجع النص دائماً وقارنه بالرقم قبل التوقيع أو الاعتماد الرسمي، ولا تعتمد عليه وحده في مستند مالي أو قانوني.</p>
+    <p class="note"><strong>تنبيه هام:</strong> هذه الأداة للمساعدة في كتابة الشيكات والفواتير والعقود. راجع النص دائماً وقارنه بالرقم قبل التوقيع أو الاعتماد الرسمي، ولا تعتمد عليه وحده في مستند مالي أو قانوني[cite: 2, 4].</p>
   </div>
 </main>
 
@@ -132,6 +166,39 @@ details p{margin:10px 0 0}
   <details><summary>لماذا نكتب «فقط» و«لا غير»؟</summary><p>لمنع إضافة أي كلمة أو رقم إلى المبلغ بعد كتابته.</p></details>
   <details><summary>هل أعتمد على النص دون مراجعة؟</summary><p>لا. راجع النص دائماً وقارنه بالرقم قبل التوقيع، فالمسؤولية على من يوقّع.</p></details>
 </article>
+
+<div class="info">
+  <section id="about">
+    <h2>عن الموقع</h2>
+    <p>«تفقيط» أداة مجانية تساعدك على كتابة المبالغ بالحروف العربية للشيكات والفواتير والعقود بالعملات الخليجية. أُنشئت لتكون سريعة وبسيطة وتعمل على الهاتف.</p>
+    <p>قد تحتوي النتائج على أخطاء في بعض الحالات الخاصة، لذلك راجع النص دائماً قبل استخدامه. إذا وجدت خطأً، أرسله لنا عبر صفحة التواصل وسنصححه.</p>
+  </section>
+  <section id="privacy">
+    <h2>سياسة الخصوصية</h2>
+    <p>آخر تحديث: أكتوبر 2026.</p>
+    <ul>
+      <li>تتم معالجة المبلغ الذي تكتبه داخل متصفحك، ولا يُرسل إلى خادمنا ولا نحفظه.</li>
+      <li>قد تسجّل شركة الاستضافة بيانات تقنية عامة مثل عنوان IP ونوع المتصفح، وهذا من طبيعة أي موقع.</li>
+      <li>عند تفعيل الإعلانات، قد تستخدم Google وشركاؤها ملفات تعريف الارتباط (الكوكيز) لعرض إعلانات مناسبة. يمكنك إدارة الإعلانات المخصصة من إعدادات حساب Google أو من إعدادات متصفحك.</li>
+      <li>نستخدم أدوات إحصاء لمعرفة عدد الزوار وأداء الصفحات، دون ربطها بهويتك.</li>
+      <li>الموقع غير موجه للأطفال.</li>
+      <li>قد نحدّث هذه السياسة، وسيظهر تاريخ آخر تحديث أعلاها.</li>
+    </ul>
+  </section>
+  <section id="contact">
+    <h2>تواصل معنا</h2>
+    <p>للاقتراحات أو الإبلاغ عن خطأ في التفقيط: <a href="mailto:usaid7405@gmail.com">usaid7405@gmail.com</a></p>
+  </section>
+</div>
+
+<footer>
+  <nav aria-label="روابط الموقع">
+    <a href="#about">عن الموقع</a>
+    <a href="#privacy">الخصوصية</a>
+    <a href="#contact">تواصل معنا</a>
+  </nav>
+  <div>© 2026 تفقيط. جميع الحقوق محفوظة. الأداة للمساعدة فقط ولا تُغني عن مراجعة النص قبل التوقيع.</div>
+</footer>
 
 <script>
 const CUR = {
@@ -280,4 +347,3 @@ document.querySelectorAll('.chip').forEach(b=>b.addEventListener('click',()=>{$(
 </script>
 </body>
 </html>
-What do you think of this
