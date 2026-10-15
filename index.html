@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>تفقيط: تحويل الأرقام إلى كلمات للشيكات والعقود</title>
+<meta name="description" content="أداة تفقيط مجانية تحوّل المبلغ إلى كلمات عربية للشيكات والفواتير والعقود، مع العملات الخليجية: الريال السعودي والدرهم الإماراتي والدينار الكويتي والريال القطري والريال العماني والدينار البحريني.">
+<style>
+:root{--bg:#f8fafc;--card:#fff;--ink:#0f172a;--accent:#2563eb;--text:#334155;--line:#e2e8f0;--soft:#f1f5f9;--err:#b91c1c}
+@media(prefers-color-scheme:dark){:root{--bg:#0b1220;--card:#111a2e;--ink:#f1f5f9;--accent:#60a5fa;--text:#cbd5e1;--line:#26334d;--soft:#18233b;--err:#fca5a5}}
+*{box-sizing:border-box}
+body{font-family:system-ui,-apple-system,"Segoe UI",Tahoma,Roboto,sans-serif;background:var(--bg);color:var(--text);margin:0;padding:16px;display:flex;justify-content:center}
+.card{width:100%;max-width:650px;background:var(--card);padding:26px;border-radius:12px;border:1px solid var(--line)}
+h1{font-size:1.4rem;color:var(--ink);margin:0 0 20px;text-align:center}
+label{display:block;font-weight:600;margin-bottom:8px;font-size:.95rem}
+.field{margin-bottom:18px}
+input,select{width:100%;padding:12px;border:1px solid var(--line);border-radius:8px;font-size:1rem;background:var(--card);color:var(--ink);font-family:inherit}
+input:focus,select:focus,button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.out{margin-top:22px;padding:16px;background:var(--soft);border-radius:8px;border-right:4px solid var(--accent)}
+.out.error{border-right-color:var(--err)}
+#result{font-size:1.2rem;font-weight:700;color:var(--ink);line-height:1.8;margin-bottom:12px}
+.error #result{color:var(--err);font-size:1rem}
+button{background:var(--accent);color:#fff;border:0;padding:9px 18px;border-radius:6px;cursor:pointer;font-size:.9rem;font-family:inherit}
+button[disabled]{opacity:.45;cursor:not-allowed}
+@media(prefers-color-scheme:dark){button{color:#0b1220}}
+#status{margin-right:10px;font-size:.85rem}
+.note{margin-top:22px;font-size:.85rem;line-height:1.7;border-top:1px solid var(--line);padding-top:14px}
+</style>
+</head>
+<body>
+<main class="card">
+<h1>تفقيط: تحويل الأرقام إلى كلمات</h1>
+<div class="field">
+<label for="amount">المبلغ</label>
+<input id="amount" type="text" inputmode="decimal" autocomplete="off" placeholder="مثال: 1500.50 أو ١٥٠٠٫٥٠">
+</div>
+<div class="field">
+<label for="cur">العملة</label>
+<select id="cur">
+<option value="SAR">ريال سعودي (SAR)</option>
+<option value="AED">درهم إماراتي (AED)</option>
+<option value="KWD">دينار كويتي (KWD)</option>
+<option value="QAR">ريال قطري (QAR)</option>
+<option value="OMR">ريال عماني (OMR)</option>
+<option value="BHD">دينار بحريني (BHD)</option>
+<option value="NONE">بدون عملة (عدد صحيح)</option>
+</select>
+</div>
+<div class="out" id="box" aria-live="polite">
+<div id="result">أدخل المبلغ ليظهر النص هنا.</div>
+<button id="copy" type="button" disabled>نسخ النص</button><span id="status" role="status"></span>
+</div>
+<p class="note"><strong>تنبيه هام:</strong> هذه الأداة للمساعدة في كتابة الشيكات والفواتير والعقود. راجع النص دائماً وقارنه بالرقم قبل التوقيع أو الاعتماد الرسمي، ولا تعتمد عليه وحده في مستند مالي أو قانوني.</p>
+</main>
+<script>
+const CUR = {
+  SAR:{g:'m',d:2,s:'ريال سعودي',a:'ريالاً سعودياً',du:'ريالان سعوديان',p:'ريالات سعودية',f:{g:'f',s:'هللة',a:'هللةً',du:'هللتان',p:'هللات'}},
+  AED:{g:'m',d:2,s:'درهم إماراتي',a:'درهماً إماراتياً',du:'درهمان إماراتيان',p:'دراهم إماراتية',f:{g:'m',s:'فلس',a:'فلساً',du:'فلسان',p:'فلوس'}},
+  KWD:{g:'m',d:3,s:'دينار كويتي',a:'ديناراً كويتياً',du:'ديناران كويتيان',p:'دنانير كويتية',f:{g:'m',s:'فلس',a:'فلساً',du:'فلسان',p:'فلوس'}},
+  QAR:{g:'m',d:2,s:'ريال قطري',a:'ريالاً قطرياً',du:'ريالان قطريان',p:'ريالات قطرية',f:{g:'m',s:'درهم',a:'درهماً',du:'درهمان',p:'دراهم'}},
+  OMR:{g:'m',d:3,s:'ريال عماني',a:'ريالاً عمانياً',du:'ريالان عمانيان',p:'ريالات عمانية',f:{g:'f',s:'بيسة',a:'بيسةً',du:'بيستان',p:'بيسات'}},
+  BHD:{g:'m',d:3,s:'دينار بحريني',a:'ديناراً بحرينياً',du:'ديناران بحرينيان',p:'دنانير بحرينية',f:{g:'m',s:'فلس',a:'فلساً',du:'فلسان',p:'فلوس'}}
+};
+const NUM = {
+  m:{1:'واحد',2:'اثنان',3:'ثلاثة',4:'أربعة',5:'خمسة',6:'ستة',7:'سبعة',8:'ثمانية',9:'تسعة',10:'عشرة',11:'أحد عشر',12:'اثنا عشر',13:'ثلاثة عشر',14:'أربعة عشر',15:'خمسة عشر',16:'ستة عشر',17:'سبعة عشر',18:'ثمانية عشر',19:'تسعة عشر'},
+  f:{1:'واحدة',2:'اثنتان',3:'ثلاث',4:'أربع',5:'خمس',6:'ست',7:'سبع',8:'ثماني',9:'تسع',10:'عشر',11:'إحدى عشرة',12:'اثنتا عشرة',13:'ثلاث عشرة',14:'أربع عشرة',15:'خمس عشرة',16:'ست عشرة',17:'سبع عشرة',18:'ثماني عشرة',19:'تسع عشرة'}
+};
+const TENS=['','','عشرون','ثلاثون','أربعون','خمسون','ستون','سبعون','ثمانون','تسعون'];
+const HUND=['','مائة','مائتان','ثلاثمائة','أربعمائة','خمسمائة','ستمائة','سبعمائة','ثمانمائة','تسعمائة'];
+const SCALE=[
+  {v:1e9,s:'مليار',du:'ملياران',c:'مليارا',p:'مليارات',a:'ملياراً'},
+  {v:1e6,s:'مليون',du:'مليونان',c:'مليونا',p:'ملايين',a:'مليوناً'},
+  {v:1e3,s:'ألف',du:'ألفان',c:'ألفا',p:'آلاف',a:'ألفاً'}
+];
+function sub100(r,g){
+  if(r<20) return r===1&&g==='f'?'إحدى':NUM[g][r];
+  const u=r%10,t=Math.floor(r/10);
+  const unit=u===1&&g==='f'?'إحدى':NUM[g][u];
+  return u?unit+' و'+TENS[t]:TENS[t];
+}
+function spoken(n,g){
+  const h=Math.floor(n/100),r=n%100,p=[];
+  if(h)p.push(HUND[h]);
+  if(r)p.push(r===1&&g==='f'&&!h?'واحدة':sub100(r,g));
+  return p.join(' و');
+}
+function form(n,noun){ // noun form after number n (n>=3 or compound)
+  if(n===0)return noun.s;
+  const r=n%100;
+  if(r>=11)return noun.a;
+  if(r>=3&&r<=10)return noun.p;
+  return noun.s;
+}
+function words(n,noun){
+  const g=noun?noun.g:'m';
+  if(noun&&n===1)return noun.s+(noun.g==='f'?' واحدة':' واحد');
+  if(noun&&n===2)return noun.du;
+  const parts=[];
+  const grp=SCALE.map(sc=>Math.floor(n/sc.v)%1000);
+  const u=n%1000;
+  const lastScale=u===0?grp.map((x,i)=>x>0?i:-1).filter(i=>i>=0).pop():-1;
+  SCALE.forEach((sc,i)=>{
+    const val=grp[i];
+    if(!val)return;
+    if(val===1)parts.push(sc.s);
+    else if(val===2)parts.push(i===lastScale&&noun?sc.c:sc.du);
+    else if(val===200)parts.push('مائتا '+sc.s);
+    else{
+      const r=val%100;
+      const nn=r>=11?((noun&&i===lastScale)?sc.s:sc.a):(r>=3&&r<=10?sc.p:sc.s);
+      parts.push(spoken(val,'m')+' '+nn);
+    }
+  });
+  if(u){
+    parts.push(u===200&&noun?'مائتا':spoken(u,g));
+  }
+  let t=parts.join(' و');
+  if(noun)t+=' '+(u===0?noun.s:form(n,noun));
+  return t;
+}
+function normalize(s){
+  return String(s).replace(/[٠-٩]/g,d=>d.charCodeAt(0)-1632)
+    .replace(/[۰-۹]/g,d=>d.charCodeAt(0)-1776)
+    .replace(/[٫]/g,'.').replace(/[٬,،\s]/g,'');
+}
+function tafqit(input,code){
+  const s=normalize(input);
+  if(s==='')return {ok:false,msg:'أدخل المبلغ'};
+  if(s[0]==='-')return {ok:false,msg:'المبلغ يجب أن يكون موجباً'};
+  if(!/^\d*\.?\d*$/.test(s)||s==='.')return {ok:false,msg:'صيغة المبلغ غير صحيحة'};
+  const [ip0,fp0='']=s.split('.');
+  const ip=ip0.replace(/^0+(?=\d)/,'')||'0';
+  if(ip.length>12)return {ok:false,msg:'الرقم كبير جداً (الحد الأقصى 12 خانة)'};
+  if(code==='NONE'){
+    if(/[1-9]/.test(fp0))return {ok:false,msg:'بدون عملة: أدخل عدداً صحيحاً فقط'};
+    const n=Number(ip);
+    return {ok:true,text:'فقط '+(n===0?'صفر':words(n,null))+' لا غير.'};
+  }
+  const c=CUR[code],d=c.d;
+  let scaled=BigInt(ip+fp0.padEnd(d+1,'0').slice(0,d+1));
+  scaled=(scaled+5n)/10n;
+  const base=10n**BigInt(d);
+  const main=Number(scaled/base),fr=Number(scaled%base);
+  if(String(main).length>12)return {ok:false,msg:'الرقم كبير جداً (الحد الأقصى 12 خانة)'};
+  const out=[];
+  if(main>0)out.push(words(main,c));
+  if(fr>0)out.push(words(fr,c.f));
+  if(!out.length)out.push('صفر '+c.s);
+  return {ok:true,text:'فقط '+out.join(' و')+' لا غير.'};
+}
+if(typeof module!=='undefined')module.exports={tafqit};
+
+const $=id=>document.getElementById(id);
+let current='';
+function run(){
+  const raw=$('amount').value;
+  const box=$('box'),res=$('result'),btn=$('copy');
+  $('status').textContent='';
+  if(raw.trim()===''){box.classList.remove('error');res.textContent='أدخل المبلغ ليظهر النص هنا.';btn.disabled=true;current='';return;}
+  const r=tafqit(raw,$('cur').value);
+  if(r.ok){box.classList.remove('error');res.textContent=r.text;current=r.text;btn.disabled=false;}
+  else{box.classList.add('error');res.textContent=r.msg;current='';btn.disabled=true;}
+}
+async function copyText(){
+  if(!current)return;
+  try{await navigator.clipboard.writeText(current);$('status').textContent='تم النسخ';}
+  catch(e){const t=document.createElement('textarea');t.value=current;document.body.appendChild(t);t.select();
+    try{document.execCommand('copy');$('status').textContent='تم النسخ';}catch(_){$('status').textContent='تعذر النسخ، انسخ النص يدوياً';}
+    t.remove();}
+}
+$('amount').addEventListener('input',run);
+$('cur').addEventListener('change',run);
+$('copy').addEventListener('click',copyText);
+</script>
+</body>
+</html>
